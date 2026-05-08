@@ -33,7 +33,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://matrimony-client-psi.vercel.app/",
+      "https://matrimony-client-psi.vercel.app",
     ],
     credentials: true,
   }),
