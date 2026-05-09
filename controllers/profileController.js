@@ -193,7 +193,7 @@ export const uploadPhotos = async (req, res) => {
       "userId",
     );
 
-    const urls = req.files.map((file) => `http://localhost:3000/${file.path}`);
+    const urls = req.files.map((file) => `/${file.path}`);
 
     profile.photos.push(...urls);
 
