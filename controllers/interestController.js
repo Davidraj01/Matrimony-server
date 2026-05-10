@@ -34,15 +34,14 @@ export const sendInterest = async (req, res) => {
       reverse.status = "accepted";
       await reverse.save();
 
-      return res.json({ matched: true }); // 💥 MATCH CREATED
+      const newInterest = await Interest.create({
+        sender,
+        receiver: receiverId,
+        status: "accepted",
+      });
+
+      return res.json(newInterest);
     }
-
-    const interest = await Interest.create({
-      sender,
-      receiver: receiverId,
-    });
-
-    res.json(interest);
   } catch (err) {
     console.error("SEND ERROR:", err);
     res.status(500).json({ message: "Failed to send interest" });
