@@ -64,16 +64,27 @@ export const register = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ message: "Invalid email" });
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "Invalid email",
+    });
+  }
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ message: "Wrong password" });
 
-  // ⭐ ADD THIS BLOCK
+  if (!match) {
+    return res.status(400).json({
+      message: "Wrong password",
+    });
+  }
+
+  // ✅ Generate Matrimony ID if missing
   const generateId = () => {
     return "MAT" + Math.floor(100000 + Math.random() * 900000);
   };
@@ -86,8 +97,12 @@ export const login = async (req, res) => {
     } while (await User.findOne({ userUniqueId: newId }));
 
     user.userUniqueId = newId;
+
     await user.save();
   }
+
+  // ✅ REFRESH USER FROM DB
+  user = await User.findById(user._id);
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
@@ -102,7 +117,7 @@ export const login = async (req, res) => {
       phone: user.phone,
       role: user.role,
       isPhoneVerified: user.isPhoneVerified,
-      userUniqueId: user.userUniqueId, // ✅ now always exists
+      userUniqueId: user.userUniqueId,
     },
   });
 };
