@@ -85,7 +85,7 @@ export const sendOTP = async (req, res) => {
       "https://www.fast2sms.com/dev/bulkV2",
       {
         route: "q",
-        message: `Your OTP is ${otp}`,
+        message: `Your OTP to register in Royal Matrimony is ${otp}`,
         language: "english",
         numbers: phone,
       },
