@@ -116,6 +116,8 @@ export const login = async (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      subscription: user.subscription,
+      isPremium: user.isPremium,
       isPhoneVerified: user.isPhoneVerified,
       userUniqueId: user.userUniqueId,
     },
