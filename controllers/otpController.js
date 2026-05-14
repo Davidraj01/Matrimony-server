@@ -35,9 +35,9 @@ export const sendOTP = async (req, res) => {
     }
 
     // ✅ ALREADY VERIFIED
-    if (user.isPhoneVerified) {
+    if (user.isPhoneVerified && req.body.intent !== "reset") {
       return res.status(400).json({
-        message: "Phone already verified",
+        message: "Already verified",
       });
     }
 
