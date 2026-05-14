@@ -123,3 +123,44 @@ export const login = async (req, res) => {
     },
   });
 };
+
+//reset password
+export const resetPassword = async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+
+    if (!phone || !password) {
+      return res.status(400).json({
+        message: "Phone and password required",
+      });
+    }
+
+    const normalizedPhone = phone.replace(/\D/g, "").slice(-10);
+
+    const user = await User.findOne({
+      phone: normalizedPhone,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    user.password = hashed;
+
+    await user.save();
+
+    res.json({
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    console.error("RESET PASSWORD ERROR:", err);
+
+    res.status(500).json({
+      message: "Password reset failed",
+    });
+  }
+};
