@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import Profile from "../models/Profile.js";
+import Counter from "../models/Counter.js";
 export const register = async (req, res) => {
   try {
     console.log("REGISTER BODY:", req.body);
@@ -27,17 +28,13 @@ export const register = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     // ✅ UNIQUE ID GENERATOR (INSIDE FUNCTION)
-    const generateId = () => {
-      return "MAT" + Math.floor(100000 + Math.random() * 900000);
-    };
+    const counter = await Counter.findOneAndUpdate(
+      { name: "matrimonyUserId" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true },
+    );
 
-    let userUniqueId = generateId();
-
-    // ✅ ENSURE UNIQUE
-    while (await User.findOne({ userUniqueId })) {
-      userUniqueId = generateId();
-    }
-
+    const userUniqueId = "RM" + String(counter.seq).padStart(6, "0");
     // ✅ CREATE USER (UPDATED)
     const user = await User.create({
       name,
@@ -85,22 +82,17 @@ export const login = async (req, res) => {
   }
 
   // ✅ Generate Matrimony ID if missing
-  const generateId = () => {
-    return "MAT" + Math.floor(100000 + Math.random() * 900000);
-  };
-
   if (!user.userUniqueId) {
-    let newId;
+    const counter = await Counter.findOneAndUpdate(
+      { name: "matrimonyUserId" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true },
+    );
 
-    do {
-      newId = generateId();
-    } while (await User.findOne({ userUniqueId: newId }));
-
-    user.userUniqueId = newId;
+    user.userUniqueId = "RM" + String(counter.seq).padStart(6, "0");
 
     await user.save();
   }
-
   // ✅ REFRESH USER FROM DB
   user = await User.findById(user._id);
 
