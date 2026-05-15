@@ -195,6 +195,15 @@ export const uploadPhotos = async (req, res) => {
 
     const urls = req.files.map((file) => `/${file.path}`);
 
+    // ✅ MAX 4 IMAGES
+    const existingPhotos = profile.photos || [];
+
+    if (existingPhotos.length + urls.length > 4) {
+      return res.status(400).json({
+        msg: "Maximum 4 photos allowed",
+      });
+    }
+
     profile.photos.push(...urls);
 
     await profile.save();
