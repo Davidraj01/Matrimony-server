@@ -7,24 +7,30 @@ export const sendInterest = async (req, res) => {
     const { receiverId } = req.body;
 
     if (!receiverId) {
-      return res.status(400).json({ message: "Receiver required" });
+      return res.status(400).json({
+        message: "Receiver required",
+      });
     }
 
     if (sender.toString() === receiverId) {
-      return res.status(400).json({ message: "Cannot send to yourself" });
+      return res.status(400).json({
+        message: "Cannot send to yourself",
+      });
     }
 
-    // 🔥 Check if already sent
+    // ✅ ALREADY SENT
     const existing = await Interest.findOne({
       sender,
       receiver: receiverId,
     });
 
     if (existing) {
-      return res.json({ alreadySent: true });
+      return res.json({
+        alreadySent: true,
+      });
     }
 
-    // 🔥 CHECK REVERSE (IMPORTANT)
+    // ✅ CHECK REVERSE
     const reverse = await Interest.findOne({
       sender: receiverId,
       receiver: sender,
@@ -32,6 +38,7 @@ export const sendInterest = async (req, res) => {
 
     if (reverse) {
       reverse.status = "accepted";
+
       await reverse.save();
 
       const newInterest = await Interest.create({
@@ -42,9 +49,20 @@ export const sendInterest = async (req, res) => {
 
       return res.json(newInterest);
     }
+
+    // ✅ NORMAL SEND
+    const interest = await Interest.create({
+      sender,
+      receiver: receiverId,
+    });
+
+    res.json(interest);
   } catch (err) {
     console.error("SEND ERROR:", err);
-    res.status(500).json({ message: "Failed to send interest" });
+
+    res.status(500).json({
+      message: "Failed to send interest",
+    });
   }
 };
 
