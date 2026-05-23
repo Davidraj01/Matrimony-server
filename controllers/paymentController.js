@@ -17,7 +17,7 @@ export const createOrder = async (req, res) => {
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
-    const amount = 100; // ₹1 test
+    const amount = 100; // ₹100 test
 
     const options = {
       amount: amount * 100,
@@ -65,7 +65,8 @@ export const verifyPayment = async (req, res) => {
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(sign)
       .digest("hex");
-
+    console.log("EXPECTED:", expected);
+    console.log("RECEIVED:", razorpay_signature);
     // ❌ INVALID PAYMENT
     if (expected !== razorpay_signature) {
       await Billing.findOneAndUpdate(
