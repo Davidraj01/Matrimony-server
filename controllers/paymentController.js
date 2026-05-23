@@ -16,7 +16,8 @@ export const createOrder = async (req, res) => {
       key_id: process.env.RAZORPAY_KEY,
       key_secret: process.env.RAZORPAY_SECRET,
     });
-
+    console.log("KEY:", process.env.RAZORPAY_KEY);
+    console.log("SECRET:", process.env.RAZORPAY_SECRET);
     const amount = 100; // ₹100 test
 
     const options = {
