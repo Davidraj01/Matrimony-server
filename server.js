@@ -32,6 +32,7 @@ const server = http.createServer(app);
 app.use(
   cors({
     origin: [
+      "https://mony.bazhilgroups.in",
       "http://localhost:5173",
       "https://matrimony-client-psi.vercel.app",
     ],

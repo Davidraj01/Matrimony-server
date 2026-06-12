@@ -28,7 +28,7 @@ export const createOrder = async (req, res) => {
 
     const order = await razorpay.orders.create(options);
 
-    // ✅ SAVE BILLING ENTRY (IMPORTANT)
+    //  SAVE BILLING ENTRY (IMPORTANT)
     await Billing.create({
       account: req.user._id,
       orderRef: order.id,
@@ -68,7 +68,7 @@ export const verifyPayment = async (req, res) => {
       .digest("hex");
     console.log("EXPECTED:", expected);
     console.log("RECEIVED:", razorpay_signature);
-    // ❌ INVALID PAYMENT
+    //  INVALID PAYMENT
     if (expected !== razorpay_signature) {
       await Billing.findOneAndUpdate(
         { orderRef: razorpay_order_id },
@@ -79,7 +79,7 @@ export const verifyPayment = async (req, res) => {
     }
 
     // ==========================
-    // ✅ UPDATE USER
+    //  UPDATE USER
     // ==========================
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 30);
@@ -96,7 +96,7 @@ export const verifyPayment = async (req, res) => {
     );
 
     // ==========================
-    // ✅ UPDATE BILLING
+    //  UPDATE BILLING
     // ==========================
     const bill = await Billing.findOne({ orderRef: razorpay_order_id });
 
